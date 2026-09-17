@@ -7,13 +7,13 @@ function Habits() {
     const {
         habits,
         addHabit,
-        completeHabit
+        completeHabit, busy
     } = useGame()
 
     const [title, setTitle] =
         useState("")
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
 
         const cleanTitle =
@@ -23,7 +23,7 @@ function Habits() {
             return
         }
 
-        addHabit(cleanTitle)
+        if (!await addHabit(cleanTitle)) return
 
         setTitle("")
     }
@@ -52,6 +52,8 @@ function Habits() {
                 onSubmit={handleSubmit}
             >
                 <input
+                    required maxLength={120}
+                    aria-label="Nuevo hábito"
                     value={title}
                     placeholder="Nuevo hábito"
                     onChange={event =>
@@ -61,7 +63,7 @@ function Habits() {
                     }
                 />
 
-                <button type="submit">
+                <button type="submit" disabled={busy}>
                     Crear hábito
                 </button>
             </form>
@@ -88,7 +90,7 @@ function Habits() {
 
                         <button
                             disabled={
-                                habit.completedToday
+                                habit.completedToday || busy
                             }
                             onClick={() =>
                                 completeHabit(

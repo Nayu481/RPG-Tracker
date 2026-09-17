@@ -6,13 +6,13 @@ function Objectives() {
     const {
         objectives,
         addObjective,
-        updateObjectiveProgress
+        completeObjective, busy
     } = useGame()
 
     const [title, setTitle] =
         useState("")
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
 
         const cleanTitle =
@@ -22,7 +22,7 @@ function Objectives() {
             return
         }
 
-        addObjective(cleanTitle)
+        if (!await addObjective(cleanTitle)) return
 
         setTitle("")
     }
@@ -51,6 +51,8 @@ function Objectives() {
                 onSubmit={handleSubmit}
             >
                 <input
+                    required maxLength={120}
+                    aria-label="Nuevo objetivo"
                     value={title}
                     placeholder="Nuevo objetivo"
                     onChange={event =>
@@ -60,7 +62,7 @@ function Objectives() {
                     }
                 />
 
-                <button type="submit">
+                <button type="submit" disabled={busy}>
                     Crear objetivo
                 </button>
             </form>
@@ -92,22 +94,11 @@ function Objectives() {
                                 />
                             </div>
 
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value={
-                                    objective.progress
-                                }
-                                onChange={event =>
-                                    updateObjectiveProgress(
-                                        objective.id,
-                                        Number(
-                                            event.target.value
-                                        )
-                                    )
-                                }
-                            />
+                            <p>{objective.completed_tasks} / {objective.total_tasks} misiones completadas</p>
+                            <button disabled={busy || objective.completed || !objective.total_tasks || objective.completed_tasks !== objective.total_tasks}
+                                onClick={() => completeObjective(objective.id)}>
+                                {objective.completed ? "Completado" : "Completar objetivo"}
+                            </button>
                         </article>
                     )
                 )}

@@ -377,7 +377,8 @@
 .mission-form input,
 .mission-form textarea,
 .mission-form select,
-.creation-form input {
+.creation-form input,
+.creation-form select {
     width: 100%;
 
     padding: 10px 11px;
@@ -402,7 +403,8 @@
 .mission-form input:focus,
 .mission-form textarea:focus,
 .mission-form select:focus,
-.creation-form input:focus {
+.creation-form input:focus,
+.creation-form select:focus {
     border-color: rgba(255, 255, 255, 0.22);
 }
 
@@ -483,6 +485,7 @@
 
 .creation-form {
     display: flex;
+    flex-wrap: wrap;
 
     gap: 8px;
 
@@ -496,8 +499,10 @@
     border-radius: 5px;
 }
 
-.creation-form input {
-    flex: 1;
+.creation-form input,
+.creation-form select {
+    flex: 1 1 120px;
+    min-width: 0;
 }
 
 .creation-form button,

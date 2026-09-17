@@ -1,6 +1,6 @@
 import { Check, Coins, Sparkles } from "lucide-react"
 
-function TaskCard({ task, onComplete }) {
+function TaskCard({ task, onComplete, busy, onEdit, onDelete }) {
     return (
         <article
             className={
@@ -12,7 +12,8 @@ function TaskCard({ task, onComplete }) {
             <button
                 className="task-check"
                 onClick={() => onComplete(task.id)}
-                disabled={task.completed}
+                disabled={task.completed || busy}
+                aria-label={`Completar ${task.title}`}
             >
                 {task.completed && <Check size={17} />}
             </button>
@@ -25,6 +26,10 @@ function TaskCard({ task, onComplete }) {
                 )}
             </div>
 
+            {(onEdit || onDelete) && <div className="task-actions">
+                {onEdit && !task.completed && <button disabled={busy} onClick={() => onEdit(task)}>Editar</button>}
+                {onDelete && <button disabled={busy} onClick={() => onDelete(task.id)}>Eliminar</button>}
+            </div>}
             <div className="task-rewards">
                 <span>
                     <Sparkles size={14} />

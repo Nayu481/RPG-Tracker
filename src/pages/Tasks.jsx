@@ -6,24 +6,38 @@ function Tasks() {
     const {
         tasks,
         addTask,
-        completeTask
+        completeTask,
+        objectives, busy, editTask, deleteTask
     } = useGame()
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
 
-    function handleSubmit(event) {
+    const [difficulty, setDifficulty] = useState("normal")
+    const [type, setType] = useState("single")
+    const [objectiveId, setObjectiveId] = useState("")
+    const [editing, setEditing] = useState(null)
+
+    function startEditing(task) {
+        setEditing(task.id)
+        setTitle(task.title)
+        setDescription(task.description)
+        setDifficulty(task.difficulty)
+        setType(task.type)
+        setObjectiveId(task.objectiveId ?? "")
+    }
+
+    async function handleSubmit(event) {
         event.preventDefault()
 
         if (!title.trim()) {
             return
         }
 
-        addTask(
-            title.trim(),
-            description.trim()
-        )
-
+        const values = { title: title.trim(), description: description.trim(), difficulty, type, objectiveId: objectiveId || null }
+        const saved = editing ? await editTask(editing, values) : await addTask(values)
+        if (!saved) return
+        setEditing(null)
         setTitle("")
         setDescription("")
     }
@@ -51,6 +65,7 @@ function Tasks() {
                 <input
                     type="text"
                     placeholder="Nombre de la misión"
+                    aria-label="Nombre de la misión" required maxLength={120}
                     value={title}
                     onChange={event =>
                         setTitle(event.target.value)
@@ -59,16 +74,26 @@ function Tasks() {
 
                 <input
                     type="text"
-                    placeholder="Descripción"
+                    placeholder="Descripción" aria-label="Descripción"
                     value={description}
                     onChange={event =>
                         setDescription(event.target.value)
                     }
                 />
 
-                <button type="submit">
-                    Crear misión
-                </button>
+                <select aria-label="Dificultad" value={difficulty} onChange={event => setDifficulty(event.target.value)}>
+                    <option value="easy">Fácil</option><option value="normal">Normal</option>
+                    <option value="hard">Difícil</option><option value="epic">Épica</option>
+                </select>
+                <select aria-label="Tipo de misión" value={type} onChange={event => setType(event.target.value)}>
+                    <option value="single">Única</option><option value="daily">Diaria</option><option value="weekly">Semanal</option>
+                </select>
+                <select aria-label="Objetivo" value={objectiveId} onChange={event => setObjectiveId(event.target.value)}>
+                    <option value="">Sin objetivo</option>
+                    {objectives.filter(objective => !objective.completed).map(objective => <option key={objective.id} value={objective.id}>{objective.title}</option>)}
+                </select>
+                <button type="submit" disabled={busy}>{editing ? "Guardar misión" : "Crear misión"}</button>
+                {editing && <button type="button" onClick={() => { setEditing(null); setTitle(""); setDescription("") }}>Cancelar</button>}
             </form>
 
             <div className="task-list">
@@ -77,6 +102,9 @@ function Tasks() {
                         key={task.id}
                         task={task}
                         onComplete={completeTask}
+                        busy={busy}
+                        onEdit={startEditing}
+                        onDelete={deleteTask}
                     />
                 ))}
             </div>

@@ -11,22 +11,20 @@ import Character from "./pages/Character"
 import Auth from "./pages/Auth"
 
 import { useAuth } from "./context/useAuth"
+import { useGame } from "./context/useGame"
+import { GameProvider } from "./context/GameContext"
 
 function App() {
-    const {
-        authenticated,
-        loading
-    } = useAuth()
+    const { user, loading } = useAuth()
+    if (loading) return <LoadingScreen />
+    if (!user) return <Auth />
+    return <GameProvider key={user.id}><GameApp /></GameProvider>
+}
 
+function GameApp() {
     const [page, setPage] = useState("dashboard")
-
-    if (loading) {
-        return <LoadingScreen />
-    }
-
-    if (!authenticated) {
-        return <Auth />
-    }
+    const { player, loading, error, busy, reload } = useGame()
+    if (loading) return <LoadingScreen />
 
     function renderPage() {
         switch (page) {
@@ -55,7 +53,11 @@ function App() {
             />
 
             <main className="main-content">
-                {renderPage()}
+                {error && <div className="auth-error" role="alert">
+                    {error}
+                    <button type="button" disabled={busy} onClick={reload}>Reintentar carga</button>
+                </div>}
+                {player && renderPage()}
             </main>
         </div>
     )

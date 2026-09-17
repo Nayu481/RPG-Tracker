@@ -10,7 +10,7 @@ function DailyMissions() {
     const {
         tasks,
         objectives,
-        completeTask
+        completeTask, busy
     } = useGame()
 
     const visibleTasks = tasks
@@ -62,8 +62,7 @@ function DailyMissions() {
                             task.objectiveId
                         )}
                         onComplete={completeTask}
-                        onEdit={() => {}}
-                        onDelete={() => {}}
+                        busy={busy}
                     />
                 ))}
 

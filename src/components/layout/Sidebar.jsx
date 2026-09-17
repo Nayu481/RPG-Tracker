@@ -1,3 +1,5 @@
+import { useState } from "react"
+import { logoutUser } from "../../services/auth"
 import {
     LayoutDashboard,
     Sword,
@@ -7,6 +9,13 @@ import {
 } from "lucide-react"
 
 function Sidebar({ page, setPage }) {
+    const [error, setError] = useState("")
+    const [leaving, setLeaving] = useState(false)
+    async function logout() {
+        setLeaving(true)
+        try { await logoutUser() }
+        catch (failure) { setError(failure.message); setLeaving(false) }
+    }
     const items = [
         {
             id: "dashboard",
@@ -71,6 +80,8 @@ function Sidebar({ page, setPage }) {
                         </button>
                     )
                 })}
+                <button className="nav-item" disabled={leaving} onClick={logout}>Cerrar sesión</button>
+                {error && <p role="alert">{error}</p>}
             </nav>
 
             <div className="sidebar-quote">
