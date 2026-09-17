@@ -43,8 +43,6 @@ body {
     min-width: 320px;
     min-height: 100vh;
 
-    overflow-x: hidden;
-
     background:
         linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
@@ -338,8 +336,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 16px 30px;
+    gap: 30px;
 
     margin-bottom: 32px;
 }
@@ -780,18 +777,5 @@ button {
         min-height: 100vh;
 
         padding: 25px;
-    }
-}
-
-@media (max-width: 600px) {
-    .page-header {
-        align-items: flex-start;
-        flex-direction: column;
-
-        gap: 12px;
-    }
-
-    .page-header p {
-        max-width: 100%;
     }
 }
