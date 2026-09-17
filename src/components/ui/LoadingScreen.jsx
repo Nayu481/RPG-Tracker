@@ -2,7 +2,7 @@ function LoadingScreen() {
     return (
         <div className="loading-screen">
             <div className="loading-mark">
-                N
+                R
             </div>
 
             <span>

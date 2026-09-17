@@ -1,29 +1,32 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Press+Start+2P&family=VT323&display=swap");
 
 :root {
     font-family: "DM Sans", sans-serif;
     color: #e8e8e5;
-    background: #090a0a;
+    background: #0a0a0a;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
 
-    --background: #090a0a;
+    --background: #0a0a0a;
     --background-soft: #0c0d0d;
-    --surface: rgba(16, 17, 17, 0.72);
-    --surface-hover: rgba(22, 23, 23, 0.82);
+    --surface: rgba(17, 17, 17, 0.85);
+    --surface-hover: rgba(24, 24, 24, 0.92);
 
-    --border: rgba(255, 255, 255, 0.08);
-    --border-light: rgba(255, 255, 255, 0.13);
+    --border: rgba(255, 255, 255, 0.10);
+    --border-light: rgba(255, 255, 255, 0.18);
+    --border-strong: #6b6d6a;
 
-    --text: #e8e8e5;
-    --text-soft: #a1a3a2;
-    --text-muted: #666968;
+    --text: #d9dbd6;
+    --text-soft: #a6a8a4;
+    --text-muted: #686b68;
 
     --accent: #d9d9d4;
     --gold: #c6a96b;
+    --gold-bright: #e6c877;
 
-    --serif: "Playfair Display", serif;
+    --serif: "Press Start 2P", monospace;
+    --terminal: "VT323", monospace;
 }
 
 * {
@@ -41,12 +44,14 @@ body {
     min-height: 100vh;
 
     background:
-        radial-gradient(
-            circle at 75% -10%,
-            rgba(255, 255, 255, 0.035),
-            transparent 35%
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 1px
         ),
         var(--background);
+    background-size: 24px 24px, 24px 24px, 100% 100%;
 
     color: var(--text);
 }
@@ -56,6 +61,162 @@ input,
 textarea,
 select {
     font: inherit;
+}
+
+/* CRT overlays */
+
+.crt-overlays {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    pointer-events: none;
+
+    mix-blend-mode: normal;
+}
+
+.crt-scanlines {
+    position: absolute;
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.025) 0px,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+}
+
+.crt-noise {
+    position: absolute;
+    inset: 0;
+
+    opacity: 0.04;
+
+    animation: crt-flicker 200ms steps(2) infinite;
+}
+
+.crt-vignette {
+    position: absolute;
+    inset: 0;
+
+    background: radial-gradient(
+        circle at 50% 50%,
+        transparent 55%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+}
+
+@keyframes crt-flicker {
+    0% {
+        opacity: 0.03;
+    }
+
+    25% {
+        opacity: 0.05;
+    }
+
+    50% {
+        opacity: 0.025;
+    }
+
+    75% {
+        opacity: 0.045;
+    }
+
+    100% {
+        opacity: 0.035;
+    }
+}
+
+@keyframes crt-scanline {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100vh);
+    }
+}
+
+.h1-glitch,
+h1.glitch {
+    position: relative;
+    display: inline-block;
+}
+
+.h1-glitch::before,
+.h1-glitch::after {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    content: attr(data-text);
+
+    opacity: 0;
+}
+
+.h1-glitch:hover::before,
+.h1-glitch:hover::after {
+    opacity: 0.6;
+}
+
+.h1-glitch:hover::before {
+    color: #f0a;
+    animation: glitch-a 600ms steps(2) infinite;
+}
+
+.h1-glitch:hover::after {
+    color: #0af;
+    animation: glitch-b 600ms steps(2) infinite;
+}
+
+@keyframes glitch-a {
+    0% {
+        transform: translate(-2px, 1px) skewX(2deg);
+    }
+
+    25% {
+        transform: translate(1px, -1px);
+    }
+
+    50% {
+        transform: translate(-1px, 0) skewX(-2deg);
+    }
+
+    75% {
+        transform: translate(2px, 1px);
+    }
+
+    100% {
+        transform: translate(-2px, 1px) skewX(2deg);
+    }
+}
+
+@keyframes glitch-b {
+    0% {
+        transform: translate(2px, -1px) skewX(-2deg);
+    }
+
+    25% {
+        transform: translate(-1px, 1px);
+    }
+
+    50% {
+        transform: translate(1px, 0) skewX(2deg);
+    }
+
+    75% {
+        transform: translate(-2px, -1px);
+    }
+
+    100% {
+        transform: translate(2px, -1px) skewX(-2deg);
+    }
 }
 
 button {
@@ -77,15 +238,50 @@ h1,
 h2 {
     font-family: var(--serif);
     font-weight: 400;
+
+    letter-spacing: 1px;
+}
+
+h1:hover,
+h2:hover,
+.sidebar-brand:hover,
+.auth-logo:hover {
+    animation: text-glitch 500ms steps(2) both;
+}
+
+@keyframes text-glitch {
+    0% {
+        text-shadow: 2px 0 rgba(255, 0, 170, 0.55), -2px 0 rgba(0, 170, 255, 0.55);
+    }
+
+    20% {
+        text-shadow: -2px 0 rgba(255, 0, 170, 0.55), 2px 0 rgba(0, 170, 255, 0.55);
+    }
+
+    40% {
+        text-shadow: 1px 1px rgba(255, 0, 170, 0.4), -1px -1px rgba(0, 170, 255, 0.4);
+    }
+
+    60% {
+        text-shadow: -1px 0 rgba(255, 0, 170, 0.5), 1px 0 rgba(0, 170, 255, 0.5);
+    }
+
+    80% {
+        text-shadow: 2px 0 rgba(255, 0, 170, 0.45), -2px 0 rgba(0, 170, 255, 0.45);
+    }
+
+    100% {
+        text-shadow: none;
+    }
 }
 
 h1 {
     margin-bottom: 8px;
 
-    font-size: clamp(32px, 4vw, 48px);
-    line-height: 1.05;
+    font-size: clamp(16px, 2.4vw, 24px);
+    line-height: 1.4;
 
-    letter-spacing: -1px;
+    letter-spacing: 1px;
 }
 
 p {
@@ -121,8 +317,9 @@ p {
 
     color: #7c7f7e;
 
-    font-size: 10px;
-    font-weight: 500;
+    font-family: var(--terminal);
+    font-size: 13px;
+    font-weight: 400;
 
     letter-spacing: 2.5px;
     text-transform: uppercase;
@@ -252,7 +449,11 @@ button {
 
     min-height: 100vh;
 
-    background: var(--background);
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        var(--background);
+    background-size: 24px 24px, 24px 24px, auto;
 }
 
 .auth-brand {
@@ -272,11 +473,14 @@ button {
         ),
         linear-gradient(
             145deg,
-            #101111,
+            #121313,
             #0a0b0b
         );
 
-    border-right: 1px solid var(--border);
+    border-right: 1px solid var(--border-strong);
+    box-shadow:
+        inset -4px 0 0 rgba(255, 255, 255, 0.03),
+        4px 0 0 rgba(0, 0, 0, 0.4);
 }
 
 .auth-logo {
@@ -285,21 +489,22 @@ button {
     color: #efefeb;
 
     font-family: var(--serif);
-    font-size: 27px;
+    font-size: 15px;
 
-    letter-spacing: 8px;
+    letter-spacing: 3px;
 }
 
 .auth-subtitle {
     display: block;
 
-    margin-top: 6px;
+    margin-top: 9px;
 
     color: #5f6260;
 
-    font-size: 8px;
+    font-family: var(--terminal);
+    font-size: 14px;
 
-    letter-spacing: 3px;
+    letter-spacing: 2px;
 }
 
 .auth-brand-content {
@@ -311,10 +516,10 @@ button {
 
     color: #e8e8e4;
 
-    font-size: clamp(35px, 4vw, 57px);
-    line-height: 1.08;
+    font-size: clamp(16px, 2.6vw, 24px);
+    line-height: 1.6;
 
-    letter-spacing: -1.5px;
+    letter-spacing: 1px;
 }
 
 .auth-brand-content p {
@@ -333,9 +538,8 @@ button {
 
     color: #666966;
 
-    font-family: var(--serif);
-    font-size: 14px;
-    font-style: italic;
+    font-family: var(--terminal);
+    font-size: 15px;
 }
 
 .auth-content {
@@ -363,7 +567,9 @@ button {
 .auth-heading h1 {
     margin-bottom: 12px;
 
-    font-size: clamp(34px, 4vw, 50px);
+    font-size: clamp(16px, 2.4vw, 22px);
+
+    letter-spacing: 1px;
 }
 
 .auth-heading p {
@@ -382,8 +588,9 @@ button {
 
     color: #777a77;
 
-    font-size: 9px;
-    font-weight: 500;
+    font-family: var(--terminal);
+    font-size: 13px;
+    font-weight: 400;
 
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -392,21 +599,27 @@ button {
 .auth-form input {
     width: 100%;
 
-    padding: 13px;
+    padding: 12px 13px;
 
     outline: none;
 
     border: 1px solid var(--border-light);
-    border-radius: 4px;
+    border-radius: 2px;
 
     background: #0c0d0d;
     color: #dedfdb;
 
-    font-size: 11px;
+    font-family: var(--terminal);
+    font-size: 15px;
+
+    box-shadow:
+        inset 2px 2px 0 rgba(0, 0, 0, 0.4),
+        2px 2px 0 rgba(0, 0, 0, 0.35);
 
     transition:
         border-color 180ms ease,
-        background 180ms ease;
+        background 180ms ease,
+        box-shadow 180ms ease;
 }
 
 .auth-form input::placeholder {
@@ -417,6 +630,10 @@ button {
     background: #0f1010;
 
     border-color: rgba(255, 255, 255, 0.3);
+
+    box-shadow:
+        inset 2px 2px 0 rgba(0, 0, 0, 0.4),
+        0 0 12px rgba(230, 200, 119, 0.12);
 }
 
 .auth-submit {
@@ -425,7 +642,10 @@ button {
     width: 100%;
 
     margin-top: 5px;
-    padding: 12px;
+    padding: 14px;
+
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
 }
 
 .auth-submit:disabled {
@@ -454,20 +674,25 @@ button {
     padding: 10px 12px;
 
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 2px;
 
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
     line-height: 1.5;
 }
 
 .auth-error {
     background: rgba(130, 60, 60, 0.08);
     color: #bd8585;
+
+    border-color: rgba(130, 60, 60, 0.4);
 }
 
 .auth-success {
     background: rgba(70, 120, 70, 0.08);
     color: #91ad8b;
+
+    border-color: rgba(70, 120, 70, 0.4);
 }
 
 .loading-screen {
@@ -480,14 +705,18 @@ button {
 
     min-height: 100vh;
 
-    background: var(--background);
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        var(--background);
+    background-size: 24px 24px, 24px 24px, auto;
 }
 
 .loading-mark {
     color: #dedfda;
 
     font-family: var(--serif);
-    font-size: 40px;
+    font-size: 32px;
 
     animation: loading-pulse 1.5s ease infinite;
 }
@@ -495,7 +724,8 @@ button {
 .loading-screen span {
     color: #555855;
 
-    font-size: 8px;
+    font-family: var(--terminal);
+    font-size: 14px;
 
     letter-spacing: 3px;
 }

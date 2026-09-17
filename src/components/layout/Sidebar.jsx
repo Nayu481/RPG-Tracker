@@ -60,11 +60,11 @@ function Sidebar({ page, setPage }) {
         <aside className="sidebar">
             <div className="sidebar-logo">
                 <span className="sidebar-brand">
-                    NAYU
+                    RPG TRACKER
                 </span>
 
                 <span className="sidebar-subtitle">
-                    RPG Tracker
+                    TU VIDA · TU AVENTURA
                 </span>
 
                 <div className="sidebar-line" />

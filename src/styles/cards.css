@@ -53,10 +53,12 @@
     padding: 0;
 
     border: 1px solid #686b69;
-    border-radius: 3px;
+    border-radius: 2px;
 
     background: transparent;
     color: #dedfda;
+
+    box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.35);
 }
 
 .task-check:hover:not(:disabled) {
@@ -107,7 +109,8 @@
 
     color: #696c6a;
 
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
 
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -119,12 +122,13 @@
     padding: 2px 5px;
 
     border: 1px solid var(--border-light);
-    border-radius: 3px;
+    border-radius: 2px;
 
     color: #777a78;
 
-    font-size: 7px;
-    font-weight: 500;
+    font-family: var(--terminal);
+    font-size: 12px;
+    font-weight: 400;
 
     letter-spacing: 0.7px;
     text-transform: uppercase;
@@ -147,7 +151,8 @@
 
     color: #626562;
 
-    font-size: 8px;
+    font-family: var(--terminal);
+    font-size: 12px;
 }
 
 .linked-objective svg {
@@ -172,7 +177,8 @@
 
     color: #858886;
 
-    font-size: 8px;
+    font-family: var(--terminal);
+    font-size: 13px;
 }
 
 .task-rewards span:last-child {
@@ -201,7 +207,7 @@
     padding: 0;
 
     border: 1px solid transparent;
-    border-radius: 3px;
+    border-radius: 2px;
 
     background: transparent;
     color: #626562;
@@ -232,16 +238,21 @@
 .primary-button {
     gap: 7px;
 
-    padding: 9px 14px;
+    padding: 11px 15px;
 
     border: 1px solid #d2d3ce;
-    border-radius: 4px;
+    border-radius: 2px;
 
     background: #d2d3ce;
     color: #101111;
 
     font-size: 10px;
-    font-weight: 500;
+    font-weight: 600;
+
+    box-shadow:
+        inset 0 -3px 0 rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        3px 3px 0 rgba(0, 0, 0, 0.5);
 }
 
 .primary-button:hover {
@@ -250,16 +261,24 @@
     border-color: #eeeeea;
 }
 
+.primary-button:active {
+    box-shadow:
+        inset 0 3px 0 rgba(0, 0, 0, 0.18),
+        1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
 .secondary-button {
-    padding: 9px 14px;
+    padding: 10px 15px;
 
     border: 1px solid var(--border-light);
-    border-radius: 4px;
+    border-radius: 2px;
 
     background: transparent;
     color: #898c89;
 
     font-size: 10px;
+
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.45);
 }
 
 .secondary-button:hover {
@@ -275,10 +294,12 @@
     padding: 0;
 
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 2px;
 
     background: transparent;
     color: #747775;
+
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* FILTROS */
@@ -295,12 +316,13 @@
     padding: 7px 11px;
 
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: 2px;
 
     background: transparent;
     color: #666967;
 
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
 
     letter-spacing: 0.5px;
 }
@@ -315,11 +337,17 @@
     border-color: var(--border);
 
     color: #d3d4d0;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.4),
+        2px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* FORMULARIO DE MISIÓN */
 
 .mission-form-container {
+    position: relative;
+
     padding: 24px;
 
     margin-bottom: 24px;
@@ -332,7 +360,30 @@
         );
 
     border: 1px solid var(--border-light);
-    border-radius: 6px;
+    border-radius: 2px;
+
+    box-shadow:
+        0 0 0 1px #000,
+        0 0 18px rgba(255, 255, 255, 0.03),
+        4px 4px 0 rgba(0, 0, 0, 0.45);
+}
+
+.mission-form-container::before {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    pointer-events: none;
+
+    background: var(--gold-bright);
+
+    opacity: 0.6;
+
+    content: "";
 }
 
 .mission-form-header {
@@ -349,7 +400,7 @@
 .mission-form-header h2 {
     margin: 0;
 
-    font-size: 22px;
+    font-size: 13px;
 }
 
 .mission-form {
@@ -367,8 +418,9 @@
 
     color: #777a78;
 
-    font-size: 9px;
-    font-weight: 500;
+    font-family: var(--terminal);
+    font-size: 13px;
+    font-weight: 400;
 
     letter-spacing: 0.8px;
     text-transform: uppercase;
@@ -386,12 +438,19 @@
     outline: none;
 
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 2px;
 
     background: #0c0d0d;
     color: #d5d6d2;
 
-    font-size: 11px;
+    font-family: var(--terminal);
+    font-size: 15px;
+
+    box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.4);
+
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease;
 }
 
 .mission-form textarea {
@@ -406,6 +465,10 @@
 .creation-form input:focus,
 .creation-form select:focus {
     border-color: rgba(255, 255, 255, 0.22);
+
+    box-shadow:
+        inset 2px 2px 0 rgba(0, 0, 0, 0.4),
+        0 0 12px rgba(230, 200, 119, 0.1);
 }
 
 .form-row {
@@ -426,7 +489,7 @@
     background: rgba(255, 255, 255, 0.018);
 
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 2px;
 }
 
 .reward-preview > svg {
@@ -444,7 +507,8 @@
 
     color: #656865;
 
-    font-size: 8px;
+    font-family: var(--terminal);
+    font-size: 12px;
 
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -496,7 +560,9 @@
     background: var(--surface);
 
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: 2px;
+
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
 .creation-form input,
@@ -507,16 +573,28 @@
 
 .creation-form button,
 .habit-card button {
-    padding: 9px 13px;
+    padding: 11px 13px;
 
     border: 1px solid #d2d3ce;
-    border-radius: 4px;
+    border-radius: 2px;
 
     background: #d2d3ce;
     color: #101111;
 
     font-size: 9px;
-    font-weight: 500;
+    font-weight: 600;
+
+    box-shadow:
+        inset 0 -3px 0 rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.creation-form button:active,
+.habit-card button:active {
+    box-shadow:
+        inset 0 3px 0 rgba(0, 0, 0, 0.18),
+        1px 1px 0 rgba(0, 0, 0, 0.5);
 }
 
 .habit-grid {
@@ -538,7 +616,12 @@
     background: var(--surface);
 
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: 2px;
+
+    box-shadow:
+        0 0 0 1px #000,
+        0 0 14px rgba(255, 255, 255, 0.02),
+        3px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
 .habit-card svg {
@@ -553,14 +636,15 @@
     margin: 5px 0 0;
 
     font-family: var(--serif);
-    font-size: 16px;
+    font-size: 11px;
     font-weight: 400;
 }
 
 .habit-card span {
     color: #686b68;
 
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
 }
 
 .habit-card button {
@@ -589,7 +673,12 @@
     background: var(--surface);
 
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: 2px;
+
+    box-shadow:
+        0 0 0 1px #000,
+        0 0 14px rgba(255, 255, 255, 0.02),
+        3px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
 .objective-card input {
@@ -608,7 +697,12 @@
     background: var(--surface);
 
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 2px;
+
+    box-shadow:
+        0 0 0 1px #000,
+        0 0 20px rgba(255, 255, 255, 0.03),
+        4px 4px 0 rgba(0, 0, 0, 0.45);
 
     text-align: center;
 }
@@ -624,25 +718,30 @@
 
     background: rgba(255, 255, 255, 0.025);
 
-    border: 1px solid var(--border-light);
-    border-radius: 50%;
+    border: 2px solid var(--border-light);
+    border-radius: 0;
 
     color: #b7b9b5;
 
     font-family: var(--serif);
-    font-size: 35px;
+    font-size: 22px;
+
+    box-shadow:
+        inset 4px 4px 0 rgba(0, 0, 0, 0.4),
+        4px 4px 0 rgba(0, 0, 0, 0.4);
 }
 
 .character-card h2 {
     margin-bottom: 5px;
 
-    font-size: 27px;
+    font-size: 15px;
 }
 
 .character-card > span {
     color: #696c69;
 
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
 
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -663,7 +762,7 @@
     background: rgba(255, 255, 255, 0.018);
 
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 2px;
 }
 
 .character-stats svg {
@@ -683,7 +782,7 @@
 
 .character-stats strong {
     font-family: var(--serif);
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 400;
 }
 
@@ -692,7 +791,8 @@
 
     color: #626562;
 
-    font-size: 8px;
+    font-family: var(--terminal);
+    font-size: 12px;
 
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -724,12 +824,13 @@
     color: #999c98;
 
     font-family: var(--serif);
-    font-size: 15px;
+    font-size: 11px;
     font-weight: 400;
 }
 
 .empty-state span {
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
 }
 
 @media (max-width: 700px) {
@@ -820,17 +921,23 @@
 }
 
 .chip {
-    padding: 6px 10px;
+    padding: 7px 11px;
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
 
     background: transparent;
     color: #999c98;
 
-    font-size: 10px;
+    font-family: var(--terminal);
+    font-size: 13px;
 
     cursor: pointer;
+
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease;
 }
 
 .chip:hover {
@@ -838,14 +945,19 @@
 }
 
 .chip.active {
-    border-color: #c8a24a;
+    border-color: var(--gold-bright);
 
     background: rgba(200, 162, 74, 0.16);
-    color: #e6c877;
+    color: var(--gold-bright);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.4),
+        2px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
 .habit-frequency {
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
 
     color: #999c98;
 
@@ -854,7 +966,8 @@
 }
 
 .hint {
-    font-size: 10px;
+    font-family: var(--terminal);
+    font-size: 13px;
 
     color: #626562;
 }
@@ -869,14 +982,15 @@
 
     margin-top: 6px;
 
-    padding: 2px 8px;
+    padding: 3px 8px;
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
 
     color: #999c98;
 
-    font-size: 9px;
+    font-family: var(--terminal);
+    font-size: 13px;
 }
 
 .task-due.overdue {
@@ -901,13 +1015,16 @@
 
     padding: 8px 14px;
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 2px;
 
     background: rgba(255, 255, 255, 0.03);
-    color: #e6c877;
+    color: var(--gold-bright);
 
-    font-size: 12px;
+    font-family: var(--terminal);
+    font-size: 15px;
+
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45);
 }
 
 .reward-list {
@@ -927,10 +1044,14 @@
 
     padding: 16px;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
 
     background: rgba(255, 255, 255, 0.03);
+
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        3px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
 .reward-card.inactive {
@@ -940,7 +1061,7 @@
 .reward-card > svg {
     flex-shrink: 0;
 
-    color: #c8a24a;
+    color: var(--gold);
 }
 
 .reward-content {
@@ -951,7 +1072,7 @@
 
 .reward-content h3 {
     font-family: var(--serif);
-    font-size: 15px;
+    font-size: 11px;
     font-weight: 400;
 }
 
@@ -960,7 +1081,8 @@
 
     color: #626562;
 
-    font-size: 11px;
+    font-family: var(--terminal);
+    font-size: 13px;
 }
 
 .reward-content strong {
@@ -971,9 +1093,10 @@
 
     margin-top: 6px;
 
-    color: #e6c877;
+    color: var(--gold-bright);
 
-    font-size: 12px;
+    font-family: var(--terminal);
+    font-size: 14px;
 }
 
 /* Achievements */
@@ -990,7 +1113,7 @@
     margin-bottom: 14px;
 
     font-family: var(--serif);
-    font-size: 18px;
+    font-size: 12px;
     font-weight: 400;
 }
 
@@ -1004,10 +1127,14 @@
 .achievement-card {
     padding: 14px;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
 
     background: rgba(255, 255, 255, 0.03);
+
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        2px 2px 0 rgba(0, 0, 0, 0.35);
 
     opacity: 0.55;
 }
@@ -1022,7 +1149,7 @@
 
 .achievement-card strong {
     font-family: var(--serif);
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 400;
 }
 
@@ -1031,7 +1158,8 @@
 
     color: #626562;
 
-    font-size: 10px;
+    font-family: var(--terminal);
+    font-size: 13px;
 }
 
 .achievement-card span {
@@ -1039,9 +1167,10 @@
 
     margin-top: 8px;
 
-    color: #e6c877;
+    color: var(--gold-bright);
 
-    font-size: 10px;
+    font-family: var(--terminal);
+    font-size: 13px;
 }
 
 /* History / activity */
@@ -1067,13 +1196,16 @@
 
     padding: 8px 12px;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
 
     background: rgba(255, 255, 255, 0.03);
     color: #999c98;
 
-    font-size: 11px;
+    font-family: var(--terminal);
+    font-size: 14px;
+
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
 }
 
 .history-list {
@@ -1104,15 +1236,15 @@
     width: 32px;
     height: 32px;
 
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
 
-    color: #c8a24a;
+    color: var(--gold);
 }
 
 .history-row strong {
     font-family: var(--serif);
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 400;
 }
 
@@ -1125,7 +1257,7 @@
     margin-bottom: 12px;
 
     font-family: var(--serif);
-    font-size: 16px;
+    font-size: 11px;
     font-weight: 400;
 }
 
@@ -1140,7 +1272,8 @@
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-    font-size: 11px;
+    font-family: var(--terminal);
+    font-size: 14px;
 
     color: #999c98;
 }
@@ -1148,7 +1281,8 @@
 .history-day strong {
     color: #cfd2ce;
 
-    font-size: 11px;
+    font-family: var(--terminal);
+    font-size: 14px;
 }
 
 @media (max-width: 700px) {

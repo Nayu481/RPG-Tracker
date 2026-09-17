@@ -58,7 +58,7 @@ function Dashboard() {
                 </p>
 
                 <span>
-                    — NAYU
+                    — RPG TRACKER
                 </span>
             </blockquote>
         </div>

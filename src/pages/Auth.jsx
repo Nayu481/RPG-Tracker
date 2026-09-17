@@ -11,11 +11,11 @@ function Auth() {
             <section className="auth-brand">
                 <div className="auth-brand-top">
                     <span className="auth-logo">
-                        NAYU
+                        RPG TRACKER
                     </span>
 
                     <span className="auth-subtitle">
-                        RPG TRACKER
+                        TU VIDA · TU AVENTURA
                     </span>
                 </div>
 
