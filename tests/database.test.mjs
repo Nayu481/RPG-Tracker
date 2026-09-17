@@ -137,9 +137,20 @@ try {
     await db.query(`update habit_completions set completed_at = completed_at - interval '7 days' where habit_id=$1`, [weeklyHabit.id])
     const [wh2] = await as(a, 'select complete_habit($1) as result', [weeklyHabit.id])
     assert.equal(wh2.result.habit.streak, 2)
-    // La meta semanal se respeta: con 2 completados esta semana se rechaza.
+    // La meta semanal se respeta: con 2 completados esta semana (ninguno hoy) se rechaza.
+    // Para no depender del día en que corra el test usamos días de la semana actual
+    // distintos de hoy; el RPC solo compara contra el inicio de semana, así que si hoy
+    // es lunes o martes tomamos días posteriores de la misma semana.
     await db.query(`delete from habit_completions where habit_id=$1`, [weeklyHabit.id])
-    await db.query(`insert into habit_completions (habit_id, user_id, completed_at) values ($1, $2, now() - interval '2 days'), ($1, $2, now() - interval '1 hour')`, [weeklyHabit.id, a])
+    await db.query(`
+        insert into habit_completions (habit_id, user_id, completed_at)
+        select $1::uuid, $2::uuid, ((week_start + offs) + time '12:00') at time zone 'America/Santiago'
+        from (
+            select date_trunc('week', now() at time zone 'America/Santiago')::date as week_start
+        ) w, unnest(array[0, 1, 2]) as offs
+        where week_start + offs <> (now() at time zone 'America/Santiago')::date
+        limit 2
+    `, [weeklyHabit.id, a])
     await assert.rejects(as(a, 'select complete_habit($1)', [weeklyHabit.id]), /meta semanal/)
     const [monTue] = await as(a, 'insert into habits(user_id,title,frequency,weekdays) values($1,$2,$3,$4) returning *', [a, 'Solo lunes y martes', 'custom', '{0,3}'])
     // isodow (Lun=1..Dom=7) - 1 para coincidir con la semana (Lun=0).
