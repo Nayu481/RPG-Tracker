@@ -10,6 +10,7 @@ import Objectives from "./pages/Objectives"
 import Rewards from "./pages/Rewards"
 import History from "./pages/History"
 import Character from "./pages/Character"
+import Leaderboard from "./pages/Leaderboard"
 import Auth from "./pages/Auth"
 import ResetPassword from "./pages/ResetPassword"
 
@@ -49,6 +50,9 @@ function GameApp() {
 
             case "character":
                 return <Character />
+
+            case "leaderboard":
+                return <Leaderboard />
 
             default:
                 return <Dashboard />

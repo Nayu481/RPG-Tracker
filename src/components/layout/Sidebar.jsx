@@ -7,7 +7,8 @@ import {
     Target,
     Gift,
     ScrollText,
-    UserRound
+    UserRound,
+    Trophy
 } from "lucide-react"
 
 function Sidebar({ page, setPage }) {
@@ -53,6 +54,11 @@ function Sidebar({ page, setPage }) {
             id: "character",
             label: "Personaje",
             icon: UserRound
+        },
+        {
+            id: "leaderboard",
+            label: "Ranking",
+            icon: Trophy
         }
     ]
 

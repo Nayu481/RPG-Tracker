@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import {
     Coins,
     Flame,
@@ -7,14 +7,19 @@ import {
 } from "lucide-react"
 
 import { useGame } from "../context/useGame"
+import { uploadAvatarFile } from "../services/profile"
 import { xpNeededForLevel } from "../utils/levelSystem"
 
 function Character() {
     const { player, updateProfile, achievements, busy } = useGame()
     const [editing, setEditing] = useState(false)
     const [username, setUsername] = useState(player.name)
+    const [avatarError, setAvatarError] = useState("")
+    const [uploading, setUploading] = useState(false)
+    const fileRef = useRef(null)
 
     const requiredXP = xpNeededForLevel(player.level)
+    const photoUrl = player.avatar && player.avatar.startsWith("http") ? player.avatar : null
 
     async function submit(event) {
         event.preventDefault()
@@ -30,6 +35,27 @@ function Character() {
     }
 
     const unlocked = achievements.filter(achievement => achievement.unlocked).length
+
+    async function handleAvatar(event) {
+        const file = event.target.files?.[0]
+        event.target.value = ""
+        if (!file) return
+        setAvatarError("")
+        setUploading(true)
+        try {
+            const url = await uploadAvatarFile(file)
+            await updateProfile({ avatar: url })
+        } catch (failure) {
+            setAvatarError(failure.message || "No se pudo subir la foto")
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    async function removeAvatar() {
+        setAvatarError("")
+        await updateProfile({ avatar: "user" })
+    }
 
     return (
         <div className="page">
@@ -47,8 +73,28 @@ function Character() {
 
             <div className="character-card">
                 <div className="character-avatar">
-                    {player.name.charAt(0)}
+                    {photoUrl ? <img src={photoUrl} alt={player.name} /> : player.name.charAt(0).toUpperCase()}
                 </div>
+
+                <div className="avatar-actions">
+                    <input
+                        ref={fileRef}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        aria-label="Cambiar foto de perfil"
+                        onChange={handleAvatar}
+                    />
+                    <button type="button" disabled={busy || uploading} onClick={() => fileRef.current?.click()}>
+                        {uploading ? "Subiendo…" : photoUrl ? "Cambiar foto" : "Subir foto"}
+                    </button>
+                    {photoUrl && (
+                        <button type="button" disabled={busy || uploading} onClick={removeAvatar}>
+                            Quitar foto
+                        </button>
+                    )}
+                </div>
+                {avatarError && <p role="alert" className="auth-error">{avatarError}</p>}
 
                 {editing ? <form className="creation-form" onSubmit={submit}>
                     <input
