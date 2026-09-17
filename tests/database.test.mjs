@@ -15,7 +15,7 @@ try {
         grant execute on function auth.uid() to authenticated, anon;
         alter default privileges in schema public grant all on tables to authenticated, anon;
     `)
-    for (const migration of ['001_initial', '002_game_backend', '003_secure_persistence']) {
+    for (const migration of ['001_initial', '002_game_backend', '003_secure_persistence', '004_features']) {
         const sql = await readFile(new URL(`../supabase/migrations/${migration}.sql`, import.meta.url), 'utf8')
         await db.exec(sql.replace('create extension if not exists pgcrypto;', ''))
     }
@@ -60,9 +60,11 @@ try {
         const [reward] = await as(a, 'select complete_task($1) as result', [tasks[i].id])
         if (i === 0) {
             assert.equal(reward.result.profile.level, 2)
-            assert.equal(reward.result.profile.xp, 20)
-            assert.equal(reward.result.profile.coins, 10)
+            assert.equal(reward.result.profile.xp, 40)
+            assert.equal(reward.result.profile.coins, 15)
             assert.equal(reward.result.profile.completed_tasks, 1)
+            assert.equal(reward.result.achievements.length, 1)
+            assert.equal(reward.result.achievements[0].code, 'first_step')
         }
         const [progress] = await as(a, 'select * from get_objectives_with_progress()')
         assert.equal(progress.progress, (i + 1) * 25)
@@ -70,7 +72,8 @@ try {
     await assert.rejects(as(a, 'select complete_task($1)', [tasks[0].id]), /ya fue completada/)
     const [closed] = await as(a, 'select complete_objective($1) as result', [objective.id])
     assert.equal(closed.result.profile.level, 4)
-    assert.equal(closed.result.profile.xp, 60)
+    assert.equal(closed.result.profile.xp, 180)
+    assert.equal(closed.result.profile.coins, 185)
     await assert.rejects(as(a, 'select complete_objective($1)', [objective.id]), /ya fue completado/)
     await assert.rejects(as(a, 'insert into tasks(user_id,title,objective_id) values($1,$2,$3)', [a, 'Late', objective.id]), /ya fue completado/)
     await as(a, 'delete from objectives where id=$1', [objective.id])
@@ -100,11 +103,87 @@ try {
     await as(a, 'update habits set title=$1 where id=$2', ['Study daily', habit.id])
     assert.equal((await as(a, 'select * from habits where id=$1', [habit.id]))[0].title, 'Study daily')
     for (const [daysAgo, expected] of [[1, 2], [3, 1]]) {
-        await db.query(`update habits set last_completed_at = (((now() at time zone 'America/Santiago')::date - $1::int) + time '12:00') at time zone 'America/Santiago' where id=$2`, [daysAgo, habit.id])
+        await db.query(`update habit_completions set completed_at = (((now() at time zone 'America/Santiago')::date - $1::int) + time '12:00') at time zone 'America/Santiago' where habit_id=$2`, [daysAgo, habit.id])
         const [next] = await as(a, 'select complete_habit($1) as result', [habit.id])
         assert.equal(next.result.habit.streak, expected)
     }
-    console.log('OK: migrations, RLS, ownership, protected columns, rewards, repeated completions, multiple level-ups, objective progress/deletion, daily habits')
+
+    // --- 004: fechas límite y recurrencia de misiones ---------------------
+    const [daily] = await as(a, 'insert into tasks(user_id,title,task_type) values($1,$2,$3) returning *', [a, 'Diaria', 'daily'])
+    const [daily2] = await as(a, 'insert into tasks(user_id,title,task_type) values($1,$2,$3) returning *', [a, 'Diaria 2', 'daily'])
+    const [weekly] = await as(a, 'insert into tasks(user_id,title,task_type) values($1,$2,$3) returning *', [a, 'Semanal', 'weekly'])
+    assert.equal(daily.last_completed_at, null)
+    assert.equal(daily2.last_completed_at, null)
+    assert.equal(weekly.last_completed_at, null)
+    await as(a, `update tasks set due_at = (now() at time zone 'America/Santiago')::date + interval '2 days'
+                 where id = $1`, [daily.id])
+    const [dailyDueFixed] = await as(a, 'select complete_task($1) as result', [daily.id])
+    assert.equal(dailyDueFixed.result.permanent, false)
+    await assert.rejects(as(a, 'select complete_task($1)', [daily.id]), /completada hoy/)
+    const [weeklyDone] = await as(a, 'select complete_task($1) as result', [weekly.id])
+    assert.equal(weeklyDone.result.permanent, false)
+    // Plazo vencido → rechazo.
+    const [stale] = await as(a, 'insert into tasks(user_id,title) values($1,$2) returning *', [a, 'Vencida'])
+    await db.query(`update tasks set due_at = (now() at time zone 'America/Santiago')::date - interval '1 day' where id = $1`, [stale.id])
+    await assert.rejects(as(a, 'select complete_task($1)', [stale.id]), /venció/)
+    // Tarea private no se puede completar por otro usuario.
+    await assert.rejects(as(b, 'select complete_task($1)', [daily2.id]), /no encontrada/)
+
+    // --- 004: frecuencia de hábitos y metacom · ---------------------------
+    const [weeklyHabit] = await as(a, 'insert into habits(user_id,title,frequency,weekly_target) values($1,$2,$3,$4) returning *', [a, 'Entrenar', 'weekly', 2])
+    const [wh1] = await as(a, 'select complete_habit($1) as result', [weeklyHabit.id])
+    assert.equal(wh1.result.habit.streak, 1)
+    // Trasladamos el completado a la semana pasada para poder completar de nuevo.
+    await db.query(`update habit_completions set completed_at = completed_at - interval '7 days' where habit_id=$1`, [weeklyHabit.id])
+    const [wh2] = await as(a, 'select complete_habit($1) as result', [weeklyHabit.id])
+    assert.equal(wh2.result.habit.streak, 2)
+    // La meta semanal se respeta: con 2 completados esta semana se rechaza.
+    await db.query(`delete from habit_completions where habit_id=$1`, [weeklyHabit.id])
+    await db.query(`insert into habit_completions (habit_id, user_id, completed_at) values ($1, $2, now() - interval '2 days'), ($1, $2, now() - interval '1 hour')`, [weeklyHabit.id, a])
+    await assert.rejects(as(a, 'select complete_habit($1)', [weeklyHabit.id]), /meta semanal/)
+    const [monTue] = await as(a, 'insert into habits(user_id,title,frequency,weekdays) values($1,$2,$3,$4) returning *', [a, 'Solo lunes y martes', 'custom', '{0,3}'])
+    // isodow (Lun=1..Dom=7) - 1 para coincidir con la semana (Lun=0).
+    const pgDow = ((new Date()).getDay() + 6) % 7
+    // Cuando hoy es Lun(0) o Jue(3), se debe poder completar; si no, rechazar.
+    if (pgDow === 0 || pgDow === 3) {
+        const [custom] = await as(a, 'select complete_habit($1) as result', [monTue.id])
+        assert.equal(custom.result.habit.streak, 1)
+        await assert.rejects(as(a, 'select complete_habit($1)', [monTue.id]), /completado hoy/)
+    } else {
+        await assert.rejects(as(a, 'select complete_habit($1)', [monTue.id]), /no corresponde hoy/)
+    }
+    // Hábito "custom" con solo HOY: se completa bien y luego se niega repetir.
+    const [todayOnly] = await as(a, 'insert into habits(user_id,title,frequency,weekdays) values($1,$2,$3,$4) returning *', [a, 'Solo hoy', 'custom', `{${pgDow}}`])
+    await as(a, 'select complete_habit($1) as result', [todayOnly.id])
+    await assert.rejects(as(a, 'select complete_habit($1)', [todayOnly.id]), /completado hoy/)
+
+    // --- 004: recompensas con oro -----------------------------------------
+    const [goldReward] = await as(a, 'insert into rewards(user_id,title,cost) values($1,$2,$3) returning *', [a, 'Ver una película', 50])
+    const [beforeRedeem] = await as(a, 'select coins from profiles where id=$1', [a])
+    assert.ok(beforeRedeem.coins >= 100, `coins suficientes (${beforeRedeem.coins})`)
+    const [redeemed] = await as(a, 'select redeem_reward($1) as result', [goldReward.id])
+    assert.equal(redeemed.result.profile.coins, beforeRedeem.coins - 50)
+    await assert.rejects(as(a, 'insert into rewards(user_id,title,cost) values($1,$2,$3)', [b, 'Robo', 5]))
+    await assert.rejects(as(a, 'update rewards set cost=0 where id=$1', [goldReward.id]), /violates check|new row for relation|check constraint/)
+    await assert.rejects(as(a, 'insert into rewards(user_id,title,cost) values($1,$2,-5)', [a, 'Negativo']), /violates check|new row for relation|check constraint/)
+    // Sin oro suficiente → rechazo y no descuenta.
+    await db.query(`update profiles set coins=2 where id=$1`, [b])
+    const [cheap] = await as(b, 'insert into rewards(user_id,title,cost) values($1,$2,10) returning *', [b, 'Café'])
+    const [coinsB] = await as(b, 'select coins from profiles where id=$1', [b])
+    assert.equal(coinsB.coins, 2)
+    await assert.rejects(as(b, 'select redeem_reward($1)', [cheap.id]), /oro/)
+
+    // --- 004: logros, eventos y estadísticas ------------------------------
+    const achievements = await as(a, 'select * from get_achievements()')
+    assert.ok(Array.isArray(achievements) && achievements.length >= 10)
+    const events = await as(a, "select * from get_events((now() at time zone 'America/Santiago')::date - 1, (now() at time zone 'America/Santiago')::date + 1)")
+    assert.ok(events.some((e) => e.kind === 'task'), 'debe existir un evento de tipo task')
+    // get_statistics devuelve armazón JSON con totals/daily
+    const [stats] = await as(a, 'select get_statistics() as result')
+    assert.ok(stats.result.totals.total_tasks >= 2)
+    assert.equal(stats.result.totals.total_objectives, 1)
+
+    console.log('OK: migrations, RLS, ownership, protected columns, rewards, repeated completions, multiple level-ups, objective progress/deletion, daily habits, due dates, recurrence, habit frequency, rewards, achievements, events, statistics')
 } finally {
     await db.close()
 }
