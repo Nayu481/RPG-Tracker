@@ -198,19 +198,25 @@
 }
 
 .task-actions button {
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    width: 25px;
+    min-width: 25px;
     height: 25px;
 
-    padding: 0;
+    padding: 0 6px;
 
     border: 1px solid transparent;
     border-radius: 2px;
 
     background: transparent;
     color: #626562;
+
+    font-family: var(--terminal);
+    font-size: 13px;
+
+    white-space: nowrap;
 }
 
 .task-actions button:hover {
@@ -838,6 +844,29 @@
         grid-template-columns: 1fr;
     }
 
+    .task-card {
+        flex-wrap: wrap;
+        align-items: flex-start;
+
+        row-gap: 10px;
+    }
+
+    .task-check {
+        width: 44px;
+        height: 44px;
+    }
+
+    .task-content {
+        flex: 1 1 calc(100% - 60px);
+    }
+
+    .task-title-row h3,
+    .task-content h3,
+    .task-content p {
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+
     .task-right {
         align-items: flex-end;
         flex-direction: column;
@@ -846,17 +875,65 @@
     }
 
     .task-rewards {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
 
-        gap: 3px;
+        gap: 8px;
+    }
+
+    .task-actions {
+        flex-basis: 100%;
+        gap: 8px;
+    }
+
+    .task-actions button {
+        flex: 1;
+        min-height: 44px;
+        padding: 10px 12px;
     }
 
     .creation-form {
         flex-direction: column;
     }
 
+    .creation-form input,
+    .creation-form select,
+    .mission-form input,
+    .mission-form textarea,
+    .mission-form select {
+        font-size: 16px; /* evita zoom en iOS */
+    }
+
+    .creation-form button {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .mission-form-container {
+        padding: 18px 14px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions .primary-button,
+    .form-actions .secondary-button {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .character-card {
+        padding: 24px 16px;
+    }
+
     .character-stats {
         grid-template-columns: 1fr;
+    }
+
+    .primary-button,
+    .secondary-button {
+        min-height: 44px;
     }
 }
 .task-card {

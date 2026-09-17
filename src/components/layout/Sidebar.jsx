@@ -9,7 +9,8 @@ import {
     ScrollText,
     UserRound,
     Trophy,
-    Compass
+    Compass,
+    LogOut
 } from "lucide-react"
 
 function Sidebar({ page, setPage }) {
@@ -104,7 +105,10 @@ function Sidebar({ page, setPage }) {
                         </button>
                     )
                 })}
-                <button className="nav-item" disabled={leaving} onClick={logout}>Cerrar sesión</button>
+                <button className="nav-item nav-logout" disabled={leaving} onClick={logout} title="Cerrar sesión">
+                    <LogOut />
+                    <span>Cerrar sesión</span>
+                </button>
                 {error && <p role="alert">{error}</p>}
             </nav>
 
