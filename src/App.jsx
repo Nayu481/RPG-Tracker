@@ -11,6 +11,7 @@ import Rewards from "./pages/Rewards"
 import History from "./pages/History"
 import Character from "./pages/Character"
 import Leaderboard from "./pages/Leaderboard"
+import Campaign from "./pages/Campaign"
 import Auth from "./pages/Auth"
 import ResetPassword from "./pages/ResetPassword"
 
@@ -41,6 +42,9 @@ function GameApp() {
 
             case "objectives":
                 return <Objectives />
+
+            case "campaign":
+                return <Campaign />
 
             case "rewards":
                 return <Rewards />

@@ -8,7 +8,8 @@ import {
     Gift,
     ScrollText,
     UserRound,
-    Trophy
+    Trophy,
+    Compass
 } from "lucide-react"
 
 function Sidebar({ page, setPage }) {
@@ -39,6 +40,11 @@ function Sidebar({ page, setPage }) {
             id: "objectives",
             label: "Objetivos",
             icon: Target
+        },
+        {
+            id: "campaign",
+            label: "Campaña",
+            icon: Compass
         },
         {
             id: "rewards",
