@@ -667,6 +667,27 @@ button {
     color: #bcbeba;
 }
 
+.auth-link {
+    align-self: flex-end;
+
+    margin-top: -9px;
+    padding: 2px 0;
+
+    border: 0;
+
+    background: transparent;
+    color: #696c69;
+
+    font-family: var(--terminal);
+    font-size: 13px;
+
+    letter-spacing: 0.5px;
+}
+
+.auth-link:hover {
+    color: var(--gold-bright);
+}
+
 .auth-error,
 .auth-success {
     margin: 0;

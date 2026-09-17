@@ -1,33 +1,33 @@
 import { useState } from "react"
-import { LogIn } from "lucide-react"
+import { MailCheck } from "lucide-react"
 
-import { loginUser } from "../../services/auth"
+import { requestPasswordReset } from "../../services/auth"
 
-function LoginForm({
-    onRegister,
-    onForgot,
-    externalError
-}) {
+function ForgotPasswordForm({ onLogin }) {
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
     const [error, setError] = useState("")
+    const [message, setMessage] = useState("")
     const [loading, setLoading] = useState(false)
 
     async function handleSubmit(event) {
         event.preventDefault()
 
         setError("")
+        setMessage("")
         setLoading(true)
 
         try {
-            await loginUser({
-                email: email.trim(),
-                password
+            await requestPasswordReset({
+                email: email.trim()
             })
+
+            setMessage(
+                "Si el correo existe, te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja y la carpeta de spam."
+            )
         } catch (error) {
             setError(
                 error.message ||
-                "No se pudo iniciar sesión."
+                "No se pudo enviar el enlace."
             )
         } finally {
             setLoading(false)
@@ -41,15 +41,16 @@ function LoginForm({
         >
             <div className="auth-heading">
                 <span className="eyebrow">
-                    BIENVENIDO DE VUELTA
+                    RECUPERAR ACCESO
                 </span>
 
                 <h1>
-                    Continúa tu aventura.
+                    ¿Olvidaste tu contraseña?
                 </h1>
 
                 <p>
-                    Tu progreso te espera.
+                    Te enviaremos un enlace para
+                    crear una nueva.
                 </p>
             </div>
 
@@ -68,38 +69,15 @@ function LoginForm({
                 />
             </label>
 
-            <label>
-                Contraseña
-
-                <input
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={event =>
-                        setPassword(event.target.value)
-                    }
-                    placeholder="••••••••"
-                />
-            </label>
-
-            <button
-                type="button"
-                className="auth-link"
-                onClick={onForgot}
-            >
-                ¿Olvidaste tu contraseña?
-            </button>
-
-            {externalError && (
-                <p className="auth-error">
-                    {externalError}
-                </p>
-            )}
-
             {error && (
                 <p className="auth-error">
                     {error}
+                </p>
+            )}
+
+            {message && (
+                <p className="auth-success">
+                    {message}
                 </p>
             )}
 
@@ -108,22 +86,22 @@ function LoginForm({
                 className="primary-button auth-submit"
                 disabled={loading}
             >
-                <LogIn size={14} />
+                <MailCheck size={14} />
 
                 {loading
-                    ? "Entrando..."
-                    : "Entrar"}
+                    ? "Enviando..."
+                    : "Enviar enlace"}
             </button>
 
             <button
                 type="button"
                 className="auth-switch"
-                onClick={onRegister}
+                onClick={onLogin}
             >
-                ¿No tienes cuenta? Crear cuenta
+                Volver a iniciar sesión
             </button>
         </form>
     )
 }
 
-export default LoginForm
+export default ForgotPasswordForm

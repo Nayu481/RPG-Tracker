@@ -11,14 +11,16 @@ import Rewards from "./pages/Rewards"
 import History from "./pages/History"
 import Character from "./pages/Character"
 import Auth from "./pages/Auth"
+import ResetPassword from "./pages/ResetPassword"
 
 import { useAuth } from "./context/useAuth"
 import { useGame } from "./context/useGame"
 import { GameProvider } from "./context/GameContext"
 
 function App() {
-    const { user, loading } = useAuth()
+    const { user, loading, recovering } = useAuth()
     if (loading) return <LoadingScreen />
+    if (recovering) return <ResetPassword />
     if (!user) return <Auth />
     return <GameProvider key={user.id}><GameApp /></GameProvider>
 }

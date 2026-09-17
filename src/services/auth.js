@@ -1,5 +1,15 @@
 import { supabase } from "./supabase"
 
+function getAuthRedirectUrl() {
+    if (typeof window === "undefined") {
+        return undefined
+    }
+
+    const base = import.meta.env.BASE_URL || "/"
+
+    return new URL(base, window.location.origin).href
+}
+
 export async function registerUser({
     email,
     password,
@@ -45,4 +55,31 @@ export async function logoutUser() {
     if (error) {
         throw error
     }
+}
+
+export async function requestPasswordReset({ email }) {
+    const { data, error } =
+        await supabase.auth.resetPasswordForEmail(
+            email,
+            {
+                redirectTo: getAuthRedirectUrl()
+            }
+        )
+
+    if (error) {
+        throw error
+    }
+
+    return data
+}
+
+export async function updatePassword({ password }) {
+    const { data, error } =
+        await supabase.auth.updateUser({ password })
+
+    if (error) {
+        throw error
+    }
+
+    return data
 }
