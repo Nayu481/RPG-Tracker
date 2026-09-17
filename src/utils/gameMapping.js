@@ -10,7 +10,18 @@ export function mapReward(row) {
     return {
         ...row, xp: row.xp_reward, coins: row.coin_reward,
         objectiveId: row.objective_id, type: row.task_type,
-        createdAt: row.created_at, completedAt: row.completed_at
+        createdAt: row.created_at, completedAt: row.completed_at,
+        dueAt: row.due_at
+    }
+}
+
+export function mapObjective(row) {
+    const total = row.total_tasks ?? 0
+    const done = row.completed_tasks ?? 0
+    return {
+        ...mapReward(row),
+        progress: total > 0 ? Math.round((done / total) * 100) : 0,
+        totalTasks: total, completedTasks: done
     }
 }
 

@@ -1,7 +1,7 @@
 import { supabase } from "./supabase"
 import { currentUserId, result, editableFields } from "./gameData"
 
-const fields = [["title"], ["description"], ["difficulty"], ["objectiveId", "objective_id"]]
+const fields = [["title"], ["description"], ["difficulty"], ["objectiveId", "objective_id"], ["frequency"], ["weekdays"], ["weeklyTarget", "weekly_target"]]
 
 export async function getHabits() {
     return result(supabase.from("habits").select("*").eq("user_id", await currentUserId()).order("created_at", { ascending: false }))

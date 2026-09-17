@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard"
 import Tasks from "./pages/Tasks"
 import Habits from "./pages/Habits"
 import Objectives from "./pages/Objectives"
+import Rewards from "./pages/Rewards"
+import History from "./pages/History"
 import Character from "./pages/Character"
 import Auth from "./pages/Auth"
 
@@ -36,6 +38,12 @@ function GameApp() {
 
             case "objectives":
                 return <Objectives />
+
+            case "rewards":
+                return <Rewards />
+
+            case "history":
+                return <History />
 
             case "character":
                 return <Character />

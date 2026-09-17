@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState } from "react"
 import { GameContext } from "./gameContext"
 import { useAuth } from "./useAuth"
-import { getProfile } from "../services/profile"
+import { getProfile, updateProfile } from "../services/profile"
 import * as taskService from "../services/tasks"
 import * as habitService from "../services/habits"
 import * as objectiveService from "../services/objectives"
-import { mapHabit, mapPlayer, mapReward } from "../utils/gameMapping"
+import * as rewardService from "../services/rewards"
+import * as achievementService from "../services/achievements"
+import { mapHabit, mapObjective, mapPlayer, mapReward } from "../utils/gameMapping"
 
 async function fetchGameData() {
-    const [profile, tasks, habits, objectives] = await Promise.all([
-        getProfile(), taskService.getTasks(), habitService.getHabits(), objectiveService.getObjectives()
+    const [profile, tasks, habits, objectives, rewards, achievements] = await Promise.all([
+        getProfile(), taskService.getTasks(), habitService.getHabits(),
+        objectiveService.getObjectives(), rewardService.getRewards(), achievementService.getAchievements()
     ])
-    return { profile, tasks, habits, objectives }
+    return { profile, tasks, habits, objectives, rewards, achievements }
 }
 
 export function GameProvider({ children }) {
@@ -86,20 +89,27 @@ export function GameProvider({ children }) {
     const value = {
         player: data ? mapPlayer(data.profile, habits) : null,
         tasks: data?.tasks.map(mapReward) ?? [], habits,
-        objectives: data?.objectives.map(mapReward) ?? [],
+        objectives: data?.objectives.map(mapObjective) ?? [],
+        rewards: data?.rewards.map(reward => ({ ...reward, cost: reward.cost, active: reward.active })) ?? [],
+        achievements: data?.achievements ?? [],
         loading, error, busy, reload: loadGameData,
         addTask: values => mutate(() => taskService.createTask(values)),
         editTask: (id, values) => mutate(() => taskService.updateTask(id, values)),
         deleteTask: id => mutate(() => taskService.deleteTask(id)),
         completeTask: id => mutate(() => taskService.completeTask(id)),
-        addHabit: title => mutate(() => habitService.createHabit({ title })),
+        addHabit: values => mutate(() => habitService.createHabit(values)),
         editHabit: (id, values) => mutate(() => habitService.updateHabit(id, values)),
         deleteHabit: id => mutate(() => habitService.deleteHabit(id)),
         completeHabit: id => mutate(() => habitService.completeHabit(id)),
         addObjective: (title, description = "") => mutate(() => objectiveService.createObjective({ title, description })),
         editObjective: (id, values) => mutate(() => objectiveService.updateObjective(id, values)),
         deleteObjective: id => mutate(() => objectiveService.deleteObjective(id)),
-        completeObjective: id => mutate(() => objectiveService.completeObjective(id))
+        completeObjective: id => mutate(() => objectiveService.completeObjective(id)),
+        updateProfile: values => mutate(() => updateProfile(values)),
+        addReward: values => mutate(() => rewardService.createReward(values)),
+        editReward: (id, values) => mutate(() => rewardService.updateReward(id, values)),
+        deleteReward: id => mutate(() => rewardService.deleteReward(id)),
+        redeemReward: id => mutate(() => rewardService.redeemReward(id))
     }
     return <GameContext.Provider value={value}>{children}</GameContext.Provider>
 }

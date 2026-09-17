@@ -5,6 +5,8 @@ import {
     Sword,
     Repeat2,
     Target,
+    Gift,
+    ScrollText,
     UserRound
 } from "lucide-react"
 
@@ -36,6 +38,16 @@ function Sidebar({ page, setPage }) {
             id: "objectives",
             label: "Objetivos",
             icon: Target
+        },
+        {
+            id: "rewards",
+            label: "Tienda",
+            icon: Gift
+        },
+        {
+            id: "history",
+            label: "Actividad",
+            icon: ScrollText
         },
         {
             id: "character",

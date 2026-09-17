@@ -13,7 +13,9 @@ export async function result(request) {
     return data
 }
 
+const keepEmpty = new Set(["title", "description"])
+
 export function editableFields(values, fields) {
     return Object.fromEntries(fields.filter(([key]) => values[key] !== undefined)
-        .map(([key, column = key]) => [column, values[key] === "" && key === "objectiveId" ? null : values[key]]))
+        .map(([key, column = key]) => [column, values[key] === "" && !keepEmpty.has(key) ? null : values[key]]))
 }

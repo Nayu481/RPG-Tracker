@@ -24,6 +24,12 @@ function TaskCard({ task, onComplete, busy, onEdit, onDelete }) {
                 {task.description && (
                     <p>{task.description}</p>
                 )}
+
+                {task.dueLabel && !task.completed && (
+                    <span className={task.dueLabel.startsWith("Vencida") ? "task-due overdue" : "task-due"}>
+                        {task.dueLabel}
+                    </span>
+                )}
             </div>
 
             {(onEdit || onDelete) && <div className="task-actions">
